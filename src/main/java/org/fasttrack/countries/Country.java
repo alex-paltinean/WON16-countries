@@ -1,22 +1,31 @@
 package org.fasttrack.countries;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
+@Setter
 @Builder
 @ToString
+@NoArgsConstructor
+@Entity
 public class Country {
-    private final long id;
-    private final String name;
-    private final String capital;
-    private final long population;
-    private final long area;
-    private final String continent;
-    private final List<String> neighbours;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private String name;
+    @Column(columnDefinition = "varchar(20) default null")
+    private String capital;
+    @Column
+    private long population;
+    @Column
+    private long area;
+    @Column(length = 15, name = "country_continent")
+    private String continent;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> neighbours;
 }

@@ -8,54 +8,50 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
 public class CountryService {
     private final CountryReader countryReader;
     private final RestClient restClient;
-    private final List<Country> countries = new ArrayList<>();
+    private final CountryRepository countryRepository;
 
     @PostConstruct
     public void init() {
         System.out.println("Post constructor on Country Service");
-        countries.addAll(countryReader.readCountries());
-        System.out.println("Service initialized with " + countries);
+        countryRepository.saveAll(countryReader.readCountries());
+        System.out.println("Service initialized with " + countryRepository.findAll());
     }
 
     public List<Country> getAll() {
-        return countries;
+        return StreamSupport.stream(countryRepository.findAll().spliterator(), false).toList();
     }
 
     public List<Country> getByContinent(String continent) {
-        return countries.stream()
-                .filter(country -> country.getContinent().equalsIgnoreCase(continent))
-                .toList();
+        return countryRepository.findByContinentNative(continent);
     }
 
     public Optional<Country> getById(long id) {
-        return countries.stream()
-                .filter(country -> country.getId() == id)
-                .findFirst();
+        return countryRepository.findById(id);
     }
 
     public Country delete(long id) {
         Country countryToBeDeleted = getById(id).orElseThrow(() -> new EntityNotFoundException("Can't delete missing country", id));
-        countries.remove(countryToBeDeleted);
+        countryRepository.deleteById(id);
         return countryToBeDeleted;
     }
 
     public Country add(Country country) {
-        countries.add(country);
+        country.setId(null);
+        countryRepository.save(country);
         return country;
     }
 
     public Country update(Country country) {
-        delete(country.getId());
-        add(country);
+        countryRepository.save(country);
         return country;
     }
 
