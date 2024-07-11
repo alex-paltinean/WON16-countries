@@ -1,6 +1,6 @@
-package org.fasttrack.countries;
+package org.fasttrack.countries.controller;
 
-import org.fasttrack.countries.exception.EntityNotFoundException;
+import org.fasttrack.countries.model.exception.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

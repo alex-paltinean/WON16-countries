@@ -1,8 +1,12 @@
-package org.fasttrack.countries;
+package org.fasttrack.countries.service.country;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.fasttrack.countries.exception.EntityNotFoundException;
+import org.fasttrack.countries.model.city.City;
+import org.fasttrack.countries.model.country.Country;
+import org.fasttrack.countries.model.country.ExternalCountry;
+import org.fasttrack.countries.model.exception.EntityNotFoundException;
+import org.fasttrack.countries.service.city.CityService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,11 +22,16 @@ public class CountryService {
     private final CountryReader countryReader;
     private final RestClient restClient;
     private final CountryRepository countryRepository;
+    private final CityService cityService;
 
     @PostConstruct
     public void init() {
         System.out.println("Post constructor on Country Service");
-        countryRepository.saveAll(countryReader.readCountries());
+        Iterable<Country> countries = countryRepository.saveAll(countryReader.readCountries());
+        for (Country country : countries) {
+            country.getCapital().setCountry(country);
+        }
+        countryRepository.saveAll(countries);
         System.out.println("Service initialized with " + countryRepository.findAll());
     }
 
@@ -31,7 +40,7 @@ public class CountryService {
     }
 
     public List<Country> getByContinent(String continent) {
-        return countryRepository.findByContinentNative(continent);
+        return countryRepository.findByContinent(continent);
     }
 
     public Optional<Country> getById(long id) {
@@ -64,5 +73,26 @@ public class CountryService {
                 });
         return response.getBody().get(0);
 
+    }
+
+    public Country addNeighbourToCountry(Long id, Long neighbourId) {
+        Country country = getById(id).orElseThrow(() -> new EntityNotFoundException("", id));
+        Country neighbour = getById(neighbourId).orElseThrow(() -> new EntityNotFoundException("", neighbourId));
+
+        country.getNeighbours().add(neighbour);
+        neighbour.getNeighbours().add(country);
+        countryRepository.save(neighbour);
+
+        return countryRepository.save(country);
+    }
+
+    public City addCityToCountry(Long id, City city) {
+        Country country = getById(id).orElseThrow(() -> new EntityNotFoundException("", id));
+        city.setCountry(country);
+        return cityService.save(city);
+    }
+
+    public List<City> getCitiesForCountry(Long id) {
+        return cityService.findByCountryId(id);
     }
 }

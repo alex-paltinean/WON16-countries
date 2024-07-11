@@ -1,4 +1,4 @@
-package org.fasttrack.countries.exception;
+package org.fasttrack.countries.model.exception;
 
 import lombok.Getter;
 

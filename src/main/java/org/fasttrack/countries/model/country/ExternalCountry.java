@@ -1,4 +1,4 @@
-package org.fasttrack.countries;
+package org.fasttrack.countries.model.country;
 
 public record ExternalCountry(ExternalCountryName name, String startOfWeek) {
 }

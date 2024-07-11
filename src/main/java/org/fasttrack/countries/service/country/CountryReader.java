@@ -1,5 +1,7 @@
-package org.fasttrack.countries;
+package org.fasttrack.countries.service.country;
 
+import org.fasttrack.countries.model.city.City;
+import org.fasttrack.countries.model.country.Country;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
@@ -32,12 +34,13 @@ public class CountryReader {
         Country.CountryBuilder countryBuilder = Country.builder()
                 .id(id)
                 .name(tokens[0])
-                .capital(tokens[1])
+                .capital(new City(tokens[1]))
                 .population(Long.parseLong(tokens[2]))
                 .area(Long.parseLong(tokens[3]))
                 .continent(tokens[4]);
         if (tokens.length == 6) {
-            countryBuilder.neighbours(Arrays.asList(tokens[5].split("~")));
+//            countryBuilder.neighbours(Arrays.asList(tokens[5].split("~")));
+            countryBuilder.neighbours(new ArrayList<>());
         }
         return countryBuilder.build();
     }

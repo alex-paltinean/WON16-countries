@@ -1,5 +1,6 @@
-package org.fasttrack.countries;
+package org.fasttrack.countries.service.country;
 
+import org.fasttrack.countries.model.country.Country;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CountryRepository extends CrudRepository<Country, Long> {
+interface CountryRepository extends CrudRepository<Country, Long> {
 
     List<Country> findByContinent(String continent);
 
