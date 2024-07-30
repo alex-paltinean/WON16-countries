@@ -33,7 +33,6 @@ public class Country {
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<Country> neighbours;
 
-
-//    @OneToMany(mappedBy = "country")
-//    private List<City> cities;
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<City> cities;
 }

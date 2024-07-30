@@ -40,7 +40,7 @@ public class CountryService {
     }
 
     public List<Country> getByContinent(String continent) {
-        return countryRepository.findByContinent(continent);
+        return countryRepository.findByContinentContains(continent);
     }
 
     public Optional<Country> getById(long id) {

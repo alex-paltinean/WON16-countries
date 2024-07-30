@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 interface CountryRepository extends CrudRepository<Country, Long> {
 
-    List<Country> findByContinent(String continent);
+    List<Country> findByContinentContains(String continent);
 
     @Query(value = "select c from Country c where continent = ?1")
     List<Country> findByContinentJPQL(String continent);
